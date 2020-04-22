@@ -1,0 +1,12 @@
+[
+  {
+    "code": "off",
+    "error": "No power supply",
+    "action": "Switch the device on"
+  },
+  {
+    "code": ".8.8",
+    "error": "Controller faulty",
+    "action": "Replace the controller."
+  }
+]

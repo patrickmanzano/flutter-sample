@@ -1,0 +1,25 @@
+{
+  "400": {
+    "desc" : "- HCM Sensor/echo error",
+    "n": [
+      {"b4": " - CS Feeding notes skew sensor (Right) (S104) Error"},
+      {"b3": " - CS Feeding notes shift sensor (Right) (S106) Error"},
+      {"b2": " - CS Feeding notes skew sensor (Left) (S103) Error"},
+      {"b1": " - CS Feeding notes skew sensor (Right) (S104) Error"}
+    ],
+    "m": [
+      {"b4": " - TS Stacker entrance sensor (Left) (S201) Error"},
+      {"b3": " - TS Stacker entrance sensor (Right) (S202) Error"},
+      {"b2": " - CS Stacker entrance sensor (Left) (S121) Error"},
+      {"b1": " - CS Stacker entrance sensor (Right) (S122) Error"}
+    ],
+    "x": [
+      {"1": "dark check error"},
+      {"2": "pattern check error"}
+    ]
+  },
+  "401": {
+    "n" : []
+  }
+
+}
