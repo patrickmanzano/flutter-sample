@@ -263,6 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
         myErrorName.text = binaryEntry['desc'];
 
         //binary checking for N
+        errorCodeDesc = errorCodeDesc + _n1+ " \n ";
         for(int i =0; i < _n1.length; i++){
           if(_n1[i] == '1'){
             String bx  = 'b' + (4-i).toString();
@@ -272,6 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
         errorCodeDesc = errorCodeDesc+ '\n';
 
         //binary checking for M
+        errorCodeDesc = errorCodeDesc + _m1+ " \n ";
         for(int i =0; i < _m1.length; i++){
           if(_m1[i] == '1'){
             String bx  = 'b' + (4-i).toString();
@@ -283,9 +285,9 @@ class _MyHomePageState extends State<MyHomePage> {
         errorCodeDesc = errorCodeDesc+ '\n';
         int x = errorCodeAsString[5] == '2' ? 2 : 1;
         //x-1 is index position of array in JSON x entries.
-        errorCodeDesc = errorCodeDesc + binaryEntry['x'][x-1][errorCodeAsString[5]].toString();
+        errorCodeDesc = errorCodeDesc + binaryEntry['x'][x-1][x.toString()].toString();
 
-        myCause.text = _n1+ " \n " + errorCodeDesc;
+        myCause.text = errorCodeDesc;
       }
     }
   }
