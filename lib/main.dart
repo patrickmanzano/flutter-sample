@@ -254,41 +254,61 @@ class _MyHomePageState extends State<MyHomePage> {
       String _n1 = (int.parse(errorCodeAsString[3], radix: 16).toRadixString(2).padLeft(4, '0'));
       String _m1 = (int.parse(errorCodeAsString[4], radix: 16).toRadixString(2).padLeft(4, '0'));
 
-      String errorCodeDesc = '';
+      // Default value
+      String errorCodeName = '';
+      String errorCodeDesc = 'NO DATA';
 
       // Check if 4xx is in JSON file e.g 400, 401
       if(binaryCodes.containsKey(errorCodeAsString.substring(0,3))){
 
         var binaryEntry = binaryCodes[errorCodeAsString.substring(0,3)];
-        myErrorName.text = binaryEntry['desc'];
-
-        //binary checking for N
-        errorCodeDesc = errorCodeDesc + _n1+ " \n ";
-        for(int i =0; i < _n1.length; i++){
-          if(_n1[i] == '1'){
-            String bx  = 'b' + (4-i).toString();
-            errorCodeDesc = errorCodeDesc + '\n' +  binaryEntry['n'][i][bx].toString();
-          }
-        }
-        errorCodeDesc = errorCodeDesc+ '\n';
-
-        //binary checking for M
-        errorCodeDesc = errorCodeDesc + _m1+ " \n ";
-        for(int i =0; i < _m1.length; i++){
-          if(_m1[i] == '1'){
-            String bx  = 'b' + (4-i).toString();
-            errorCodeDesc = errorCodeDesc + '\n' + binaryEntry['m'][i][bx].toString();
-          }
+        //myErrorName.text = binaryEntry['desc'].toString();
+        if(binaryEntry['desc'] != null){
+          errorCodeDesc = binaryEntry['desc'];
         }
 
-        // Check x input
-        errorCodeDesc = errorCodeDesc+ '\n';
-        int x = errorCodeAsString[5] == '2' ? 2 : 1;
-        //x-1 is index position of array in JSON x entries.
-        errorCodeDesc = errorCodeDesc + binaryEntry['x'][x-1][x.toString()].toString();
+        if(binaryEntry['n']!= null && binaryEntry['n'].length > 0 && _n1 != '0000') {
+          //binary checking for N
+          errorCodeDesc = errorCodeDesc + _n1 + " \n ";
+          for (int i = 0; i < _n1.length; i++) {
+            if (_n1[i] == '1') {
+              if(binaryEntry['n'][i].toString().length >0 ){
+                String bx = 'b' + (4 - i).toString();
+                errorCodeDesc =
+                    errorCodeDesc + '\n' + binaryEntry['n'][i][bx].toString();
+              }
+            }
+          }
+          errorCodeDesc = errorCodeDesc + '\n';
+        }
 
-        myCause.text = errorCodeDesc;
+        if(binaryEntry['m'] != null  && binaryEntry['m'].length > 0 && _m1 != '0000') {
+          //binary checking for M
+          errorCodeDesc = errorCodeDesc + _m1 + " \n ";
+          for (int i = 0; i < _m1.length; i++) {
+            if (_m1[i] == '1') {
+              if(binaryEntry['m'][i] != null) {
+                String bx = 'b' + (4 - i).toString();
+                errorCodeDesc =
+                    errorCodeDesc + '\n' + binaryEntry['m'][i][bx].toString();
+              }
+            }
+          }
+        }
+
+        if(binaryEntry['x'] !=null && binaryEntry['x'].length > 0) {
+          // Check x input
+          errorCodeDesc = errorCodeDesc + '\n';
+          int x = errorCodeAsString[5] == '2' ? 2 : 1;
+          //x-1 is index position of array in JSON x entries.
+          errorCodeDesc =
+              errorCodeDesc + binaryEntry['x'][x - 1][x.toString()].toString();
+        }
       }
+
+      myErrorName.text = errorCodeName;
+      myCause.text = errorCodeDesc;
+
     }
   }
 }
