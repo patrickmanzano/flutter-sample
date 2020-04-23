@@ -3,44 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
-class StatusCode {
-  String code;
-  String error;
-  String action;
-
-  StatusCode({this.code, this.error, this.action});
-
-  factory StatusCode.fromJson(Map<String, dynamic> json) {
-    return new StatusCode(
-      code: json['code'],
-      error: json['error'],
-      action: json['action'],
-    );
-  }
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['code'] = this.code;
-    data['error'] = this.error;
-    data['action'] = this.action;
-    return data;
-  }
-}
-
-Future<String> fetchStatusCode() async {
-  final response =
-  rootBundle.loadString('../assets/data/cmdv4Statusdisplayatnormal.json');
-  // Use the compute function to run parsePhotos in a separate isolate
-  return response;
-}
-
 Future<String> fetchBinaryCodes() async {
   final response =
   rootBundle.loadString('../assets/data/4XXStatusCodes.json');
   return response;
-}
-
-Future wait(int seconds) {
-  return new Future.delayed(Duration(seconds: seconds), () => {});
 }
 
 void main() => runApp(MyApp());
@@ -91,23 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final myErrorName = TextEditingController();
   final myCause = TextEditingController();
 
-  List<StatusCode> allRecord;
   Map<String,dynamic> binaryCodes;
 
-  parseStatusData(String responseBody, bool isStatus) {
-    if(isStatus){
-
-      final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-      setState(() {
-        allRecord = parsed
-            .map<StatusCode>((json) => new StatusCode.fromJson(json))
-            .toList();
-      });
-    }else{
+  parseStatusData(String responseBody) {
       setState(() {
         binaryCodes = json.decode(responseBody);
       });
-    }
   }
 
   @override
@@ -117,11 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
     myErrorCode.addListener(_printLatestValue);
     myErrorName.addListener(_printLatestValue);
     myCause.addListener(_printLatestValue);
-    fetchStatusCode().then((String) {
-      parseStatusData(String, true);
-    });
     fetchBinaryCodes().then((binaryJson) {
-      parseStatusData(binaryJson, false);
+      parseStatusData(binaryJson);
     });
 
   }
