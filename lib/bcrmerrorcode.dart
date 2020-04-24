@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'dart:async' show Future;
-import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
-void main() => runApp(BcrmErrorCode());
+void main() => runApp(new MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: BcrmErrorCode(),
+    ));
 
-Future<String> fetchBinaryCodes() async {
-  final response =
-  rootBundle.loadString('../assets/data/4XXStatusCodes.json');
+Future<String> fetchBinaryCodes(String filePath) async {
+  final response = rootBundle.loadString(filePath);
   return response;
 }
 
@@ -17,13 +18,13 @@ class BcrmErrorCode extends StatefulWidget {
 }
 
 class _BcrmErrorCodeState extends State<BcrmErrorCode> {
-
   final myController = TextEditingController();
   final myErrorCode = TextEditingController();
   final myErrorName = TextEditingController();
   final myCause = TextEditingController();
-
-  Map<String,dynamic> binaryCodes;
+  final mySecondCause = TextEditingController();
+  Map<String, dynamic> binary4XXCodes;
+  Map<String, dynamic> binary5XXCodes;
 
   @override
   void initState() {
@@ -33,17 +34,32 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
     myErrorCode.addListener(_printLatestValue);
     myErrorName.addListener(_printLatestValue);
     myCause.addListener(_printLatestValue);
+    mySecondCause.addListener(_printLatestValue);
 
-    fetchBinaryCodes().then((binaryJson) {
-      parseStatusData(binaryJson);
+    fetchBinaryCodes('assets/data/4XXStatusCodes.json').then((binaryJson) {
+      parseStatusData(binaryJson, '4XX');
+    });
+
+    fetchBinaryCodes('assets/data/5XXStatusCodes.json').then((binaryJson) {
+      parseStatusData(binaryJson, '5XX');
     });
   }
 
-  parseStatusData(String responseBody) {
-    setState(() {
-      binaryCodes = json.decode(responseBody);
-    });
+  parseStatusData(String responseBody, String code) {
+    switch(code){
+      case '4XX':
+        setState(() {
+          binary4XXCodes = json.decode(responseBody);
+        });
+        break;
+      case '5XX':
+        setState(() {
+          binary5XXCodes = json.decode(responseBody);
+        });
+        break;
+    }
   }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is removed from the widget tree.
@@ -52,6 +68,7 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
     myErrorCode.dispose();
     myErrorName.dispose();
     myCause.dispose();
+    mySecondCause.dispose();
     super.dispose();
   }
 
@@ -61,6 +78,7 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
     myErrorCode.text = "";
     myErrorName.text = "";
     myCause.text = "";
+    mySecondCause.text = "";
     return Scaffold(
       appBar: AppBar(
         title: Text('BCRM Error Code'),
@@ -76,6 +94,12 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               TextField(
+                autofocus: true,
+                inputFormatters: [
+                  new WhitelistingTextInputFormatter(RegExp("[a-zA-Z,0-9]")),
+                  new BlacklistingTextInputFormatter(new RegExp('[\\.,]')),
+                ],
+                textCapitalization: TextCapitalization.characters,
                 controller: myController,
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
@@ -87,12 +111,10 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
                     contentPadding: const EdgeInsets.all(10),
                     hintText: "TYPE BCRM CODE HERE...",
                     hintStyle: TextStyle(color: Colors.grey[400]),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(5)),
+                    focusedBorder:
+                        OutlineInputBorder(borderSide: BorderSide(color: Colors.white), borderRadius: BorderRadius.circular(5)),
                     enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(5))),
+                        borderSide: BorderSide(color: Colors.white), borderRadius: BorderRadius.circular(5))),
               ),
               SizedBox(height: 5),
               Expanded(
@@ -131,29 +153,10 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
                             children: <Widget>[
                               Text(
                                 myCause.text,
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(fontSize: 18),
                               ),
                               SizedBox(height: 10),
-                              Text('Next to check', style: TextStyle(fontSize: 20)),
-                              SizedBox(height: 10),
-//                              FutureBuilder<NextCause>(
-//                                future: loadNextCause(),
-//                                builder: (context, snapshot) {
-//                                  if (snapshot.hasData) {
-//                                    return new Container(
-//                                        padding: new EdgeInsets.all(20.0),
-//                                        child: new Row(
-//                                          children: <Widget>[
-//                                            Text(
-//                                                "The next cause are ${snapshot.data.id} and ${snapshot.data.causes}")
-//                                          ],
-//                                        ));
-//                                  } else if (snapshot.hasError) {
-//                                    return new Text("${snapshot.error}");
-//                                  }
-//                                  return new CircularProgressIndicator();
-//                                },
-//                              ),
+                              Text(mySecondCause.text, style: TextStyle(fontSize: 15)),
                             ],
                           ),
                         ),
@@ -171,90 +174,94 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
 
   void _printLatestValue() {
     if (myController.text.length == 7) {
-
-      myErrorCode.text = myController.text;
+      myErrorCode.text = myController.text.toUpperCase();
       String errorCodeAsString = myErrorCode.text;
-
-      String _n1 = (int.parse(errorCodeAsString[3], radix: 16).toRadixString(2).padLeft(4, '0'));
-      String _m1 = (int.parse(errorCodeAsString[4], radix: 16).toRadixString(2).padLeft(4, '0'));
 
       // Default value
       String errorCodeName = '';
       String errorCodeDesc = '';
+      String errorCodeDesc2 = errorCodeDesc;
 
-      // Check if 4xx is in JSON file e.g 400, 401
-      if(binaryCodes.containsKey(errorCodeAsString.substring(0,3))){
+      if(errorCodeAsString.substring(0, 1) == '4'){
+        // ----- START OF 4XX ------
+        print("this is errorCodeAsString " + errorCodeAsString.substring(0, 1));
 
-        var binaryEntry = binaryCodes[errorCodeAsString.substring(0,3)];
+        if (binary4XXCodes.containsKey(errorCodeAsString.substring(0, 3))) {
 
-        if(binaryEntry['desc'] != null){
-          errorCodeName = binaryEntry['desc'];
-        }
+          var binaryEntry = binary4XXCodes[errorCodeAsString.substring(0, 3)];
 
-        if(binaryEntry['n']!= null && binaryEntry['n'].length > 0 && _n1 != '0000') {
-          //binary checking for N
-          for (int i = 0; i < _n1.length; i++) {
-            if (_n1[i] == '1') {
-              if(binaryEntry['n'][i].toString().length >0 ){
-                String bx = 'b' + (4 - i).toString();
-                errorCodeDesc =
-                    errorCodeDesc + '\n' + binaryEntry['n'][i][bx].toString();
+          String _n1 = (int.parse(errorCodeAsString[3], radix: 16).toRadixString(2).padLeft(4, '0'));
+          String _m1 = (int.parse(errorCodeAsString[4], radix: 16).toRadixString(2).padLeft(4, '0'));
+//          print(binaryEntry.toString() + "\n");
+
+          if (errorCodeAsString.substring(0, 1) == '4') {
+            if (binaryEntry['desc'] != null) {
+              errorCodeName = binaryEntry['desc'];
+            }
+          }
+          if (binaryEntry['n'] != null && binaryEntry['n'].length > 0 && _n1 != '0000') {
+            //binary checking for N
+            for (int i = 0; i < _n1.length; i++) {
+              if (_n1[i] == '1') {
+                if (binaryEntry['n'][i].toString().length > 0) {
+                  String bx = 'b' + (4 - i).toString();
+                  errorCodeDesc = errorCodeDesc + binaryEntry['n'][i][bx].toString();
+                }
+              }
+            }
+            errorCodeDesc = errorCodeDesc;
+          }
+          if (binaryEntry['m'] != null && binaryEntry['m'].length > 0 && _m1 != '0000') {
+            //binary checking for M
+            for (int i = 0; i < _m1.length; i++) {
+              if (_m1[i] == '1') {
+                if (binaryEntry['m'][i] != null) {
+                  String bx = 'b' + (4 - i).toString();
+                  errorCodeDesc = errorCodeDesc + binaryEntry['m'][i][bx].toString();
+                }
               }
             }
           }
-          errorCodeDesc = errorCodeDesc + '\n';
-        }
-
-        if(binaryEntry['m'] != null  && binaryEntry['m'].length > 0 && _m1 != '0000') {
-          //binary checking for M
-          for (int i = 0; i < _m1.length; i++) {
-            if (_m1[i] == '1') {
-              if(binaryEntry['m'][i] != null) {
-                String bx = 'b' + (4 - i).toString();
-                errorCodeDesc =
-                    errorCodeDesc + '\n' + binaryEntry['m'][i][bx].toString();
-              }
+          if (binaryEntry['x'] != null) {
+            // Check x input
+            if (errorCodeAsString[5] == '1') {
+              errorCodeDesc = errorCodeDesc + binaryEntry['x'][0]['1'].toString();
+            } else if (errorCodeAsString[5] == '2') {
+              errorCodeDesc = errorCodeDesc + binaryEntry['x'][1]['2'].toString();
             }
+          }
+          if (binaryEntry['y'] != null) {
+            errorCodeDesc2 = binaryEntry['y'];
           }
         }
 
-        if(binaryEntry['x'] !=null && binaryEntry['x'].length > 0) {
-          // Check x input
-          errorCodeDesc = errorCodeDesc + '\n\n';
-          int x = errorCodeAsString[5] == '2' ? 2 : 1;
-          //x-1 is index position of array in JSON x entries.
-          errorCodeDesc =
-              errorCodeDesc + binaryEntry['x'][x - 1][x.toString()].toString();
+        // ----- END OF 4XX ------
+      } else if(errorCodeAsString.substring(0, 1) == '5'){
+        // ----- START OF 5XX ------
+        // 5XX Map keys contains the actual/fixed value
+        if(binary5XXCodes.containsKey(errorCodeAsString)){
+          var binaryEntry = binary5XXCodes[errorCodeAsString];
+
+          if (binaryEntry['x'] != null) {
+            errorCodeDesc = errorCodeDesc + binaryEntry['x'];
+          }
+          if (binaryEntry['y'] != null) {
+            errorCodeDesc = errorCodeDesc + binaryEntry['y'];
+          }
+          // ----- END OF 5XX ------
         }
       }
-
-      myErrorName.text = errorCodeName;
+      //"${errorCodeAsString[0]}"
+      // Check if 4xx is in JSON file e.g 400, 401
 
       // Empty desc - display no data instead.
-      if(errorCodeDesc == ''){
+      if (errorCodeDesc == '') {
         errorCodeDesc = 'NO DATA';
+        errorCodeDesc2 = 'NO DATA';
       }
+      myErrorName.text = errorCodeName;
       myCause.text = errorCodeDesc;
-
+      mySecondCause.text = errorCodeDesc2;
     }
   }
 }
-//
-//class NextCause {
-//  final String id;
-//  final List<String> cause;
-//
-//  NextCause({this.id, this.cause});
-//
-//  factory NextCause.fromJson(Map<String, dynamic> getJson) {
-//    return NextCause(
-//      id: getJson['id'],
-//      cause: getCause(getJson['causes']),
-//    );
-//  }
-//
-//  static List<String> getCause(causeJson) {
-//    List<String> causeList = new List<String>.from(causeJson);
-//    return causeList;
-//  }
-//}
