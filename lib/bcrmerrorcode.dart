@@ -1,11 +1,13 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
 void main() => runApp(new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: BcrmErrorCode(),
-    ));
+  debugShowCheckedModeBanner: false,
+  home: BcrmErrorCode(),
+));
 
 Future<String> fetchBinaryCodes(String filePath) async {
   final response = rootBundle.loadString(filePath);
@@ -23,8 +25,8 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
   final myErrorName = TextEditingController();
   final myCause = TextEditingController();
   final mySecondCause = TextEditingController();
-  Map<String, dynamic> binary4XXCodes;
-  Map<String, dynamic> binary5XXCodes;
+  Map<String, dynamic> binary4XXCodes = new HashMap<String, dynamic>();
+  Map<String, dynamic> binary5XXCodes = new HashMap<String, dynamic>();
 
   @override
   void initState() {
@@ -40,7 +42,13 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
       parseStatusData(binaryJson, '4XX');
     });
 
-    fetchBinaryCodes('assets/data/5XXStatusCodes.json').then((binaryJson) {
+
+    // Use '5XX' to store all fixed code values
+    // to single Map (binary5XXCodes) for multiple json files.
+    fetchBinaryCodes('assets/data/50XStatusCodes.json').then((binaryJson) {
+      parseStatusData(binaryJson, '5XX');
+    });
+    fetchBinaryCodes('assets/data/51XStatusCodes.json').then((binaryJson) {
       parseStatusData(binaryJson, '5XX');
     });
   }
@@ -49,12 +57,12 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
     switch(code){
       case '4XX':
         setState(() {
-          binary4XXCodes = json.decode(responseBody);
+          binary4XXCodes.addAll(json.decode(responseBody));
         });
         break;
       case '5XX':
         setState(() {
-          binary5XXCodes = json.decode(responseBody);
+          binary5XXCodes.addAll(json.decode(responseBody));
         });
         break;
     }
@@ -112,7 +120,7 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
                     hintText: "TYPE BCRM CODE HERE...",
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     focusedBorder:
-                        OutlineInputBorder(borderSide: BorderSide(color: Colors.white), borderRadius: BorderRadius.circular(5)),
+                    OutlineInputBorder(borderSide: BorderSide(color: Colors.white), borderRadius: BorderRadius.circular(5)),
                     enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white), borderRadius: BorderRadius.circular(5))),
               ),
@@ -209,7 +217,6 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
                 }
               }
             }
-            errorCodeDesc = errorCodeDesc;
           }
           if (binaryEntry['m'] != null && binaryEntry['m'].length > 0 && _m1 != '0000') {
             //binary checking for M
@@ -241,7 +248,9 @@ class _BcrmErrorCodeState extends State<BcrmErrorCode> {
         // 5XX Map keys contains the actual/fixed value
         if(binary5XXCodes.containsKey(errorCodeAsString)){
           var binaryEntry = binary5XXCodes[errorCodeAsString];
-
+          if (binaryEntry['desc'] != null) {
+            errorCodeName = binaryEntry['desc'];
+          }
           if (binaryEntry['x'] != null) {
             errorCodeDesc = errorCodeDesc + binaryEntry['x'];
           }

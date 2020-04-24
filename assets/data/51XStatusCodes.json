@@ -1,0 +1,77 @@
+{
+  "51100XX": {
+    "desc": "-  Invalid action setting",
+    "x": " - Cancel Deposit command, which is not specified (11)16 to both Action setting <3> and <4>, is executed when HCM is in abnormal status.",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51101XX": {
+    "desc": "-  Validator module  open",
+    "x": " -   The validator module is opened at the beginning of the command  execution.   (Sensor: S050)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51102XX": {
+    "desc": "-  LF (front door)  open",
+    "x": " -   LF (front door) is opened at the beginning of the command   execution.     (Sensor: S032)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51103XX": {
+    "desc": "-  TS unit Failure",
+    "x": " -   A command is issued while TS unit is in Failure condition.",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51104XX": {
+    "desc": "-  TS tape end error",
+    "x": " -    Detects the end of the winding tape. (Sensor: S204)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51105XX": {
+    "desc": "-  Note remain in TS",
+    "x": " -    Note remain in TS at the beginning of the command execution. (Sensor: S205, S206)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51106XX": {
+    "desc": "-  LR (rear door) open",
+    "x": " -    LR (rear door)  is opened at the beginning of the command execution. (Sensor: S038)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51107XX": {
+    "desc": "-  HCM unit is not in position (Upper)",
+    "x": " -    HCM upper unit is withdrawn at the beginning of the command  execution. (Sensor: S023) ",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51108XX": {
+    "desc": "-  HCM unit is not in position (Lower)",
+    "x": " -    HCM lower unit is withdrawn at the beginning of the command execution. (Sensor: S033)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51100XX": {
+    "desc": "-  Invalid action setting",
+    "x": " - Cancel Deposit command, which is not specified (11)16 to both  Action setting <3> and <4>, is executed when HCM is in abnormal status.",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51101XX": {
+    "desc": "-  Validator module open",
+    "x": " -   The validator module is opened at the beginning of the command execution.   (Sensor: S050)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51102XX": {
+    "desc": "-  LF (front door) open",
+    "x": " -   LF (front door) is opened at the beginning of the command  execution.  (Sensor: S032)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51103XX": {
+    "desc": "-  TS unit Failure",
+    "x": " -   A command is issued while TS unit is in Failure condition.",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51104XX": {
+    "desc": "-  TS tape end error",
+    "x": " -    Detects the end of the winding tape.  (Sensor: S204)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  },
+  "51105XX": {
+    "desc": "-  Note remain in TS",
+    "x": " -    Note remain in TS at the beginning of the command execution.  (Sensor: S205, S206)",
+    "y": " - Short circuit / Disconnection of the cable\n - CE board (RX278) Failure\n - DE board (RX279) Failure\n - D/D Converter Failure\n - Power Failure"
+  }
+}
